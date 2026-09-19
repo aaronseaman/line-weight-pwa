@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#090a0d" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#f4f6f8" media="(prefers-color-scheme: light)">
+  <meta name="description" content="A private, science-grounded weight trend tracker that works offline.">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Line">
+  <title>Line — Weight Trend</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+
+  <header class="topbar">
+    <div class="brand" aria-label="Line weight tracker">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M4 22c4-.1 5.7-6 9.1-6 2.9 0 3.5 3.5 6.2 3.5 3.3 0 4.5-6.2 8.2-10.2"/><circle cx="27.5" cy="9.3" r="1.7"/></svg>
+      <span>Line</span>
+    </div>
+    <button class="icon-button" id="settingsButton" aria-label="Open settings" title="Settings">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2.8 2.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6v.2h-4V21a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1L4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9A1.7 1.7 0 0 0 3 14H2.8v-4H3a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9L4.2 7 7 4.2l.1.1a1.7 1.7 0 0 0 1.9.3 1.7 1.7 0 0 0 1-1.6v-.2h4V3a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1L19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.2v4H21a1.7 1.7 0 0 0-1.6 1Z"/></svg>
+    </button>
+  </header>
+
+  <main id="main">
+    <section class="summary" aria-labelledby="summaryTitle">
+      <div class="eyebrow" id="summaryTitle">7-day trend</div>
+      <div class="weight-row">
+        <span class="weight-value" id="trendWeight">—</span>
+        <span class="weight-unit" id="trendUnit">lb</span>
+      </div>
+      <div class="change-row">
+        <span class="change" id="weeklyChange">Add your first weight</span>
+        <span class="dot" aria-hidden="true"></span>
+        <span id="goalDistance">No goal yet</span>
+      </div>
+    </section>
+
+    <section class="chart-card" aria-labelledby="chartTitle">
+      <div class="section-head">
+        <div>
+          <h1 id="chartTitle">Progress</h1>
+          <p id="chartRange">Last 12 weeks</p>
+        </div>
+        <div class="range-switch" role="group" aria-label="Chart time range">
+          <button data-range="28">4W</button>
+          <button data-range="84" class="active" aria-pressed="true">12W</button>
+          <button data-range="365">1Y</button>
+          <button data-range="all">ALL</button>
+        </div>
+      </div>
+      <div class="chart-wrap" id="chartWrap">
+        <canvas id="weightChart" role="img" aria-label="Weight history and seven-day trend chart"></canvas>
+        <div class="chart-empty" id="chartEmpty">
+          <span>Your trend appears after the first weigh-in.</span>
+          <button class="text-button" id="sampleButton">Preview sample data</button>
+        </div>
+      </div>
+      <div class="legend" aria-hidden="true">
+        <span><i class="legend-line trend-line"></i>Trend</span>
+        <span><i class="legend-line forecast-line"></i>Projection</span>
+        <span><i class="legend-dot"></i>Weigh-ins</span>
+        <span><i class="legend-line goal-line"></i>Goal</span>
+      </div>
+    </section>
+
+    <section class="forecast-grid" aria-label="Forecast and goal">
+      <article class="metric-card">
+        <span class="metric-label">Current pace</span>
+        <strong id="paceValue">—</strong>
+        <span class="metric-note" id="paceNote">Needs 7+ days</span>
+      </article>
+      <article class="metric-card">
+        <span class="metric-label">Goal forecast</span>
+        <strong id="forecastDate">—</strong>
+        <span class="metric-note" id="forecastNote">Set a goal</span>
+      </article>
+    </section>
+
+    <section class="goal-card" id="goalCard" aria-labelledby="goalTitle">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Goal</p>
+          <h2 id="goalTitle">Set your direction</h2>
+        </div>
+        <button class="text-button" id="editGoalButton">Edit</button>
+      </div>
+      <div class="goal-track"><span id="goalProgress"></span></div>
+      <div class="goal-meta"><span id="goalStart">Start —</span><span id="goalTarget">Goal —</span></div>
+      <p class="guidance" id="goalGuidance">A goal is optional. Your history stays useful without one.</p>
+    </section>
+
+    <section class="history" aria-labelledby="historyTitle">
+      <div class="section-head">
+        <div>
+          <h2 id="historyTitle">Recent</h2>
+          <p id="historyCount">0 entries</p>
+        </div>
+      </div>
+      <div id="historyList" class="history-list"></div>
+    </section>
+
+    <section class="method-card" aria-labelledby="methodTitle">
+      <details>
+        <summary id="methodTitle">How the forecast works</summary>
+        <div class="method-copy">
+          <p>Daily scale readings naturally move with hydration, food, sodium, and timing. Line emphasizes a 7-day moving average, then fits a simple linear trend to up to 42 recent days. Predictions extend that observed trend; they are estimates, not promises.</p>
+          <p>The confidence label uses the amount of data, time covered, and how closely readings follow the trend. A changing routine, medication, illness, or water balance can make the forecast wrong.</p>
+          <p>For intentional weight loss, the CDC describes about 1–2 lb per week as gradual and more likely to be maintained. NHLBI notes that losing 3–5% of current weight can improve some health measures. Goals are personal—consider a clinician if you are pregnant, under 18, have an eating-disorder history, or have a condition or medicine that affects weight.</p>
+          <nav class="sources" aria-label="Scientific sources">
+            <a href="https://www.cdc.gov/healthy-weight-growth/losing-weight/index.html" target="_blank" rel="noreferrer">CDC: Losing weight</a>
+            <a href="https://www.nhlbi.nih.gov/health/heart-healthy-living/healthy-weight" target="_blank" rel="noreferrer">NHLBI: Healthy weight</a>
+          </nav>
+        </div>
+      </details>
+    </section>
+  </main>
+
+  <button class="fab" id="addButton">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+    <span>Log weight</span>
+  </button>
+
+  <dialog id="weightDialog" class="sheet">
+    <form method="dialog" id="weightForm">
+      <div class="sheet-grabber" aria-hidden="true"></div>
+      <div class="sheet-head">
+        <div><p class="eyebrow">Weigh-in</p><h2 id="weightDialogTitle">Log weight</h2></div>
+        <button class="icon-button close-button" value="cancel" aria-label="Close"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
+      </div>
+      <label class="input-label" for="weightInput">Weight</label>
+      <div class="number-field">
+        <input id="weightInput" name="weight" type="number" inputmode="decimal" min="1" max="1500" step="0.1" required autocomplete="off">
+        <span id="formUnit">lb</span>
+      </div>
+      <label class="input-label" for="dateInput">Date</label>
+      <input class="date-field" id="dateInput" name="date" type="date" required>
+      <p class="form-hint">For a cleaner trend, weigh under similar conditions each time.</p>
+      <div class="form-actions">
+        <button type="button" class="danger-button hidden" id="deleteEntryButton">Delete</button>
+        <button type="submit" class="primary-button">Save weigh-in</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="goalDialog" class="sheet">
+    <form method="dialog" id="goalForm">
+      <div class="sheet-grabber" aria-hidden="true"></div>
+      <div class="sheet-head">
+        <div><p class="eyebrow">Direction</p><h2>Weight goal</h2></div>
+        <button class="icon-button close-button" value="cancel" aria-label="Close"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
+      </div>
+      <label class="input-label" for="goalWeightInput">Goal weight</label>
+      <div class="number-field">
+        <input id="goalWeightInput" name="goalWeight" type="number" inputmode="decimal" min="1" max="1500" step="0.1" required>
+        <span id="goalFormUnit">lb</span>
+      </div>
+      <label class="input-label" for="goalDateInput">Target date <span>optional</span></label>
+      <input class="date-field" id="goalDateInput" name="goalDate" type="date">
+      <p class="form-hint" id="goalPaceHint">Choose a realistic date. Line will compare it with your measured trend.</p>
+      <div class="form-actions">
+        <button type="button" class="danger-button hidden" id="clearGoalButton">Clear goal</button>
+        <button type="submit" class="primary-button">Save goal</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="settingsDialog" class="sheet settings-sheet">
+    <div class="sheet-grabber" aria-hidden="true"></div>
+    <div class="sheet-head">
+      <div><p class="eyebrow">Line</p><h2>Settings</h2></div>
+      <button class="icon-button close-button" id="closeSettings" aria-label="Close"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
+    </div>
+    <div class="settings-group">
+      <label for="unitSelect">Units</label>
+      <select id="unitSelect"><option value="lb">Pounds (lb)</option><option value="kg">Kilograms (kg)</option></select>
+    </div>
+    <div class="settings-group">
+      <label for="themeSelect">Appearance</label>
+      <select id="themeSelect"><option value="system">System</option><option value="dark">Dark</option><option value="light">Light</option></select>
+    </div>
+    <div class="settings-actions">
+      <button class="secondary-button" id="exportJsonButton">Export backup</button>
+      <button class="secondary-button" id="exportCsvButton">Export CSV</button>
+      <label class="secondary-button file-button">Import backup<input type="file" id="importInput" accept="application/json"></label>
+    </div>
+    <p class="privacy-note"><strong>Private by design.</strong> Everything is stored only in this browser. Export a backup before clearing browser data or changing phones.</p>
+    <button class="danger-link" id="resetButton">Erase all data</button>
+    <p class="version">Line 1.0 · Not medical advice</p>
+  </dialog>
+
+  <dialog id="welcomeDialog" class="welcome">
+    <form method="dialog" id="welcomeForm">
+      <div class="welcome-mark"><svg viewBox="0 0 52 52" aria-hidden="true"><path d="M6 35c7-.2 10-10.8 16-10.8 5 0 6.2 5.8 11 5.8 5.8 0 8-10.3 14.5-16.8"/><circle cx="47.5" cy="13.2" r="2.6"/></svg></div>
+      <p class="eyebrow">Private weight trend</p>
+      <h1>See the line,<br>not the noise.</h1>
+      <p class="welcome-copy">One daily number. A calmer seven-day trend. A forecast that shows its limits.</p>
+      <label class="input-label" for="welcomeWeight">Today's weight</label>
+      <div class="number-field"><input id="welcomeWeight" type="number" inputmode="decimal" min="1" max="1500" step="0.1" required autofocus><span id="welcomeUnit">lb</span></div>
+      <button class="primary-button welcome-button" type="submit">Start tracking</button>
+      <p class="local-note"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10V8a5 5 0 0 1 10 0v2M5 10h14v10H5z"/></svg>Stored only on this device</p>
+    </form>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="app.js" defer></script>
+</body>
+</html>
